@@ -38,7 +38,7 @@ def load_image(file_name, color_key=None):
 
 
 # Фон главного меню
-backround = pg.transform.scale(load_image('Back.png'), (WIDTH, HEIGHT))
+background = pg.transform.scale(load_image('Background.png'), (WIDTH, HEIGHT))
 
 
 # Функция загрузки уровня
@@ -117,25 +117,36 @@ def score_screen():
 
 
 # Экран настроек
-# Добавить кнопки back, video
-# Добавить возможность выхода нажатием кнопки escape
+# Добавить кнопки video
 def settings_screen():
     running = True
+
+    back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png')
 
     while running:
         # Фон главного меню
         screen.fill((0, 0, 0))
-        screen.blit(backround, (0, 0))
+        screen.blit(background, (0, 0))
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
                 terminate()
 
+            # Escape
             if event.type == pg.KEYDOWN:
                 if pg.key.get_pressed()[pg.K_ESCAPE]:
                     running = False
 
+            # Кнопка back
+            if event.type == pg.USEREVENT and event.button == back_button:
+                running = False
+
+            back_button.handle_event(event)
+
+        back_button.draw(screen)
+        back_button.check_hover(pg.mouse.get_pos())
+        # Отрисовка дисплея
         pg.display.flip()
 
 
@@ -156,7 +167,7 @@ def home_screen():
     while running:
         # Фон главного меню
         screen.fill((0, 0, 0))
-        screen.blit(backround, (0, 0))
+        screen.blit(background, (0, 0))
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
