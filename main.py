@@ -37,6 +37,10 @@ def load_image(file_name, color_key=None):
     return image
 
 
+# Фон главного меню
+backround = pg.transform.scale(load_image('Back.png'), (WIDTH, HEIGHT))
+
+
 # Функция загрузки уровня
 def load_level(file_name):
     file_name = "data/" + file_name
@@ -87,37 +91,73 @@ class ImageButton(object):
             pg.event.post(pg.event.Event(pg.USEREVENT, button=self))
 
 
-# Кнопки главного меню
-play_button = ImageButton(25, 150, 200, 125, 'Play.png', 'Play_hover.png')
-score_button = ImageButton(25, 260, 150, 100, 'Score.png', 'Score_hover.png')
-exit_button = ImageButton(25, 350, 150, 100, 'Exit.png', 'Exit_hover.png')
-
-
-# Начальный экран
-def home_screen():
-    # Фон главного меню
-    backround = pg.transform.scale(load_image('Back.png'), (WIDTH, HEIGHT))
-    screen.blit(backround, (0, 0))
-
-
 # Класс игрока
+# Доработать
 class Player(object):
     pass
 
 
 # Класс врагов
+# Доработать
 class Enemy(object):
     pass
 
 
-# Старт программы
-if __name__ == '__main__':
+# Экран проигрыша
+# добавить кнопки restart, main_menu, exit
+def game_over_screen():
+    pass
+
+
+# Экран рекордов
+# Добавить кнопки back
+# Добавить возможность выхода нажатием кнопки escape
+def score_screen():
+    pass
+
+
+# Экран настроек
+# Добавить кнопки back, video
+# Добавить возможность выхода нажатием кнопки escape
+def settings_screen():
+    running = True
+
+    while running:
+        # Фон главного меню
+        screen.fill((0, 0, 0))
+        screen.blit(backround, (0, 0))
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                running = False
+                terminate()
+
+            if event.type == pg.KEYDOWN:
+                if pg.key.get_pressed()[pg.K_ESCAPE]:
+                    running = False
+
+        pg.display.flip()
+
+
+# Экран новой игры
+def new_game_screen():
+    pass
+
+
+# Начальный экран
+def home_screen():
+    # Кнопки главного меню
+    play_button = ImageButton(25, 150, 200, 125, 'Play.png', 'Play_hover.png')
+    score_button = ImageButton(25, 260, 150, 100, 'Score.png', 'Score_hover.png')
+    exit_button = ImageButton(25, 350, 150, 100, 'Exit.png', 'Exit_hover.png')
 
     running = True
 
-    # Запуск начального экрана
-    home_screen()
     while running:
+        # Фон главного меню
+        screen.fill((0, 0, 0))
+        screen.blit(backround, (0, 0))
+
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
@@ -127,6 +167,9 @@ if __name__ == '__main__':
             if event.type == pg.USEREVENT and event.button == exit_button:
                 running = False
                 terminate()
+
+            if event.type == pg.USEREVENT and event.button == score_button:
+                settings_screen()
 
             play_button.handle_event(event)
             score_button.handle_event(event)
@@ -141,6 +184,10 @@ if __name__ == '__main__':
         exit_button.check_hover(pg.mouse.get_pos())
         # Отрисовка дисплея
         pg.display.flip()
-        clock.tick(FPS)
 
+
+# Старт программы
+if __name__ == '__main__':
+    # Запуск начального экрана
+    home_screen()
     pg.quit()
