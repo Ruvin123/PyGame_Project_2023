@@ -110,18 +110,12 @@ def game_over_screen():
 
 
 # Экран рекордов
-# Добавить кнопки back
-# Добавить возможность выхода нажатием кнопки escape
+# Доработать
 def score_screen():
-    pass
 
-
-# Экран настроек
-# Добавить кнопки video
-def settings_screen():
     running = True
 
-    back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png')
+    back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png', 'sounds/button.mp3')
 
     while running:
         # Фон главного меню
@@ -150,6 +144,12 @@ def settings_screen():
         pg.display.flip()
 
 
+# Экран настроек
+# Добавить кнопку video audio, back  и возможность выхода по кнопке escape
+def settings_screen():
+    pass
+
+
 # Экран новой игры
 def new_game_screen():
     pass
@@ -158,9 +158,9 @@ def new_game_screen():
 # Начальный экран
 def home_screen():
     # Кнопки главного меню
-    play_button = ImageButton(25, 150, 200, 125, 'Play.png', 'Play_hover.png')
-    score_button = ImageButton(25, 260, 150, 100, 'Score.png', 'Score_hover.png')
-    exit_button = ImageButton(25, 350, 150, 100, 'Exit.png', 'Exit_hover.png')
+    play_button = ImageButton(25, 150, 200, 125, 'Play.png', 'Play_hover.png', 'sounds/button.mp3')
+    score_button = ImageButton(25, 260, 150, 100, 'Score.png', 'Score_hover.png', 'sounds/button.mp3')
+    exit_button = ImageButton(25, 350, 150, 100, 'Exit.png', 'Exit_hover.png', 'sounds/button.mp3')
 
     running = True
 
@@ -180,7 +180,7 @@ def home_screen():
                 terminate()
 
             if event.type == pg.USEREVENT and event.button == score_button:
-                settings_screen()
+                score_screen()
 
             play_button.handle_event(event)
             score_button.handle_event(event)
