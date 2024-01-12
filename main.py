@@ -112,7 +112,6 @@ def game_over_screen():
 # Экран рекордов
 # Доработать
 def score_screen():
-
     running = True
 
     back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png', 'sounds/button.mp3')
@@ -144,15 +143,122 @@ def score_screen():
         pg.display.flip()
 
 
-# Экран настроек
-# Добавить кнопку video audio, back  и возможность выхода по кнопке escape
-def settings_screen():
-    pass
+def audio_screen():
+    running = True
+
+    click = pg.mixer.Sound('sounds/button.mp3')
+    volume = 1
+    play = True
+    back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png', 'sounds/button.mp3')
+    audio_pad = ImageButton(125, 20, 500, 400, 'Vol_pad.png')
+
+    while running:
+        # Фон
+        screen.fill((0, 0, 0))
+        screen.blit(background, (0, 0))
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                running = False
+                terminate()
+
+            # Escape
+            if event.type == pg.KEYDOWN:
+                if pg.key.get_pressed()[pg.K_ESCAPE]:
+                    running = False
+
+            # Стелочка влево -> понижение громкости музыки
+            if event.type == pg.KEYDOWN:
+                if pg.key.get_pressed()[pg.K_LEFT]:
+                    volume -= 0.1
+                    pg.mixer_music.set_volume(volume)
+                    click.play()
+
+            # Стрелочка вправо -> повышение громкости музыки
+            if event.type == pg.KEYDOWN:
+                if pg.key.get_pressed()[pg.K_RIGHT]:
+                    volume += 0.1
+                    pg.mixer_music.set_volume(volume)
+                    click.play()
+
+            # Стрелочка вниз -> Воспроизвести / Пауза
+            if event.type == pg.KEYDOWN:
+                if pg.key.get_pressed()[pg.K_DOWN]:
+                    if play:
+                        pg.mixer_music.pause()
+                        play = False
+                        click.play()
+                    else:
+                        pg.mixer_music.unpause()
+                        play = True
+                        click.play()
+
+            # Кнопка back
+            if event.type == pg.USEREVENT and event.button == back_button:
+                running = False
+
+            back_button.handle_event(event)
+
+        back_button.draw(screen)
+        back_button.check_hover(pg.mouse.get_pos())
+        audio_pad.draw(screen)
+        # Отрисовка дисплея
+        pg.display.flip()
 
 
 # Экран новой игры
-def new_game_screen():
-    pass
+def select_level_screen():
+    running = True
+
+    back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png', 'sounds/button.mp3')
+    level_1_button = ImageButton(10, 80, 300, 300, 'Level_1.png', 'Level_1_hover.png',
+                                 'sounds/button_play.mp3')
+    level_2_button = ImageButton(250, 80, 300, 300, 'Level_2.png', 'Level_2_hover.png',
+                                 'sounds/button_play.mp3')
+    level_3_button = ImageButton(500, 80, 300, 300, 'Level_3.png', 'Level_3_hover.png',
+                                 'sounds/button_play.mp3')
+
+    while running:
+        # Фон главного меню
+        screen.fill((0, 0, 0))
+        screen.blit(background, (0, 0))
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                running = False
+                terminate()
+
+            # Кнопка back
+            if event.type == pg.USEREVENT and event.button == back_button:
+                running = False
+
+            # Первый уровень
+            if event.type == pg.USEREVENT and event.button == level_1_button:
+                pass
+
+            # Второй уровень
+            if event.type == pg.USEREVENT and event.button == level_2_button:
+                pass
+
+            # Третий уровень
+            if event.type == pg.USEREVENT and event.button == level_3_button:
+                pass
+
+            back_button.handle_event(event)
+            level_1_button.handle_event(event)
+            level_2_button.handle_event(event)
+            level_3_button.handle_event(event)
+
+        back_button.draw(screen)
+        back_button.check_hover(pg.mouse.get_pos())
+        level_1_button.draw(screen)
+        level_1_button.check_hover(pg.mouse.get_pos())
+        level_2_button.draw(screen)
+        level_2_button.check_hover(pg.mouse.get_pos())
+        level_3_button.draw(screen)
+        level_3_button.check_hover(pg.mouse.get_pos())
+        # Отрисовка дисплея
+        pg.display.flip()
 
 
 # Начальный экран
@@ -161,8 +267,13 @@ def home_screen():
     play_button = ImageButton(25, 150, 200, 125, 'Play.png', 'Play_hover.png', 'sounds/button.mp3')
     score_button = ImageButton(25, 260, 150, 100, 'Score.png', 'Score_hover.png', 'sounds/button.mp3')
     exit_button = ImageButton(25, 350, 150, 100, 'Exit.png', 'Exit_hover.png', 'sounds/button.mp3')
+    audio_button = ImageButton(690, 450, 100, 50, 'Audio.png', 'Audio_hover.png', 'sounds/button.mp3')
 
     running = True
+
+    # Музыка игры
+    pg.mixer.music.load('sounds/main_menu.mp3')
+    pg.mixer_music.play()
 
     while running:
         # Фон главного меню
@@ -179,16 +290,28 @@ def home_screen():
                 running = False
                 terminate()
 
+            # Кнопка Score
             if event.type == pg.USEREVENT and event.button == score_button:
                 score_screen()
 
+            # Кнопка Audio
+            if event.type == pg.USEREVENT and event.button == audio_button:
+                audio_screen()
+
+            # Кнопка PLay
+            if event.type == pg.USEREVENT and event.button == play_button:
+                select_level_screen()
+
             play_button.handle_event(event)
+            audio_button.handle_event(event)
             score_button.handle_event(event)
             exit_button.handle_event(event)
 
         # Отрисовка кнопок на главном экране + Датчик пересечения курсора с кнопкой
         play_button.draw(screen)
         play_button.check_hover(pg.mouse.get_pos())
+        audio_button.draw(screen)
+        audio_button.check_hover(pg.mouse.get_pos())
         score_button.draw(screen)
         score_button.check_hover(pg.mouse.get_pos())
         exit_button.draw(screen)
