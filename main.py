@@ -2,6 +2,7 @@
 import sys
 import pygame as pg
 import os
+import sqlite3
 
 # Основные настройки
 pg.init()
@@ -39,6 +40,8 @@ def load_image(file_name, color_key=None):
 
 # Фон главного меню
 background = pg.transform.scale(load_image('Background.png'), (WIDTH, HEIGHT))
+# Фон экрана смерти
+gameoverscreen = pg.transform.scale(load_image('gameover.png'), (WIDTH, HEIGHT))
 
 
 # Функция загрузки уровня
@@ -106,7 +109,33 @@ class Enemy(object):
 # Экран проигрыша
 # добавить кнопки restart, main_menu, exit
 def game_over_screen():
-    pass
+    running = True
+
+    exit_button = ImageButton(20, 20, 150, 100, 'Exit.png', 'Exit_hover.png', 'sounds/button.mp3')
+    restart_button = ImageButton(780, 480, 150, 100, 'Reset.png', 'Reset_hover.png', 'sounds/button.mp3')
+    main_menu_button = ImageButton(390, 240, 150, 100, 'Reset.png', 'Reset_hover.png', 'sounds/button.mp3')
+    while running:
+        screen.fill((0, 0, 0))
+        screen.blit(gameoverscreen, (0, 0))
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                running = False
+                terminate()
+
+            if event.button == exit_button:
+                running = False
+                terminate()
+
+            exit_button.handle_event(event)
+
+            if event.button == restart_button:
+                load_level()
+
+        exit_button.draw(screen)
+        exit_button.check_hover(pg.mouse.get_pos())
+        # Отрисовка дисплея
+        pg.display.flip()
 
 
 # Экран рекордов
