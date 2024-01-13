@@ -2,6 +2,7 @@
 import sys
 import pygame as pg
 import os
+import player
 
 # Основные настройки
 pg.init()
