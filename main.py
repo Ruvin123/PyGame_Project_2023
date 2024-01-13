@@ -2,6 +2,8 @@
 import sys
 import pygame as pg
 import os
+import player
+import level_loader
 import sqlite3
 
 # Основные настройки
@@ -92,18 +94,6 @@ class ImageButton(object):
             if self.sound:
                 self.sound.play()
             pg.event.post(pg.event.Event(pg.USEREVENT, button=self))
-
-
-# Класс игрока
-# Доработать
-class Player(object):
-    pass
-
-
-# Класс врагов
-# Доработать
-class Enemy(object):
-    pass
 
 
 # Экран проигрыша
