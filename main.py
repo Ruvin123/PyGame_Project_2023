@@ -16,6 +16,20 @@ pg.display.set_caption('Demo Game')  # Название нужно будет п
 # Время
 clock = pg.time.Clock()
 
+connection = sqlite3.connect('database/pg.db')
+
+cur = connection.cursor()
+
+font = pg.font.SysFont('comicsansms', 20)
+record = cur.execute('''SELECT name, score FROM score''')
+
+RED = (250, 0, 0)
+
+records = {}
+
+for nam, scor in record:
+    records[nam] = scor
+
 
 # Функция завершения программы
 def terminate():
@@ -43,7 +57,7 @@ def load_image(file_name, color_key=None):
 # Фон главного меню
 background = pg.transform.scale(load_image('Background.png'), (WIDTH, HEIGHT))
 # Фон экрана смерти
-gameoverscreen = pg.transform.scale(load_image('gameover.png'), (WIDTH, HEIGHT))
+gameoverscreen = pg.transform.scale(load_image('gameover.jpg'), (WIDTH, HEIGHT))
 
 
 # Функция загрузки уровня
@@ -138,10 +152,18 @@ def score_screen():
 
     back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png', 'sounds/button.mp3')
 
+    a = 0
+
+    follow = None
+
+    for i in records.keys():
+        follow = font.render(f'{i} {records[i]}', 1, RED)
+
     while running:
         # Фон главного меню
         screen.fill((0, 0, 0))
         screen.blit(background, (0, 0))
+        screen.blit(follow, (a, 0))
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -163,6 +185,8 @@ def score_screen():
         back_button.check_hover(pg.mouse.get_pos())
         # Отрисовка дисплея
         pg.display.flip()
+        pg.display.update()
+
 
 
 def audio_screen():
