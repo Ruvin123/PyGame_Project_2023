@@ -111,7 +111,7 @@ class Enemy(object):
 def game_over_screen():
     running = True
 
-    exit_button = ImageButton(20, 20, 150, 100, 'Exit.png', 'Exit_hover.png', 'sounds/button.mp3')
+    exit_button = ImageButton(20, 20, 150, 100, 'Exit_game_over.png', 'Exit_game_over.png', 'sounds/button.mp3')
     restart_button = ImageButton(780, 480, 150, 100, 'Reset.png', 'Reset_hover.png', 'sounds/button.mp3')
     main_menu_button = ImageButton(390, 240, 150, 100, 'Menu.png', 'Menu_hover.png', 'sounds/button.mp3')
     while running:
