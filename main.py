@@ -101,9 +101,9 @@ class ImageButton(object):
 def game_over_screen():
     running = True
 
-    exit_button = ImageButton(20, 20, 150, 100, 'Exit.png', 'Exit_hover.png', 'sounds/button.mp3')
+    exit_button = ImageButton(20, 20, 150, 100, 'Exit_game_over.png', 'Exit_game_over.png', 'sounds/button.mp3')
     restart_button = ImageButton(780, 480, 150, 100, 'Reset.png', 'Reset_hover.png', 'sounds/button.mp3')
-    main_menu_button = ImageButton(390, 240, 150, 100, 'Reset.png', 'Reset_hover.png', 'sounds/button.mp3')
+    main_menu_button = ImageButton(390, 240, 150, 100, 'Menu.png', 'Menu_hover.png', 'sounds/button.mp3')
     while running:
         screen.fill((0, 0, 0))
         screen.blit(gameoverscreen, (0, 0))
@@ -120,7 +120,10 @@ def game_over_screen():
             exit_button.handle_event(event)
 
             if event.button == restart_button:
-                load_level()
+                select_level_screen()
+
+            if event.button == main_menu_button:
+                home_screen()
 
         exit_button.draw(screen)
         exit_button.check_hover(pg.mouse.get_pos())
