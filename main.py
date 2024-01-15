@@ -1,5 +1,7 @@
 # Импортируем модули
 import sys
+
+import pygame
 import pygame as pg
 import os
 import player
@@ -12,7 +14,7 @@ FPS = 60
 size = WIDTH, HEIGHT = 800, 500
 # Экран
 screen = pg.display.set_mode(size)
-pg.display.set_caption('Demo Game')  # Название нужно будет поменять
+pg.display.set_caption('Fantastic Islands')
 # Время
 clock = pg.time.Clock()
 
@@ -188,7 +190,6 @@ def score_screen():
         pg.display.update()
 
 
-
 def audio_screen():
     running = True
 
@@ -244,9 +245,9 @@ def audio_screen():
                 running = False
 
             back_button.handle_event(event)
+        back_button.check_hover(pg.mouse.get_pos())
 
         back_button.draw(screen)
-        back_button.check_hover(pg.mouse.get_pos())
         audio_pad.draw(screen)
         # Отрисовка дисплея
         pg.display.flip()
@@ -307,6 +308,79 @@ def select_level_screen():
         pg.display.flip()
 
 
+# Регистрация
+# Доработать
+def Regist():
+    running = True
+
+    regist_button = ImageButton(WIDTH // 2 - 50, HEIGHT // 2 + 50, 100, 32, 'registr.png', 'registr_hover.png', 'sounds/button.mp3')
+    back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png', 'sounds/button.mp3')
+
+    base_font = pygame.font.Font(None, 32)
+    user_text = ''
+    input_rect = pygame.Rect(WIDTH // 2 - 50, HEIGHT // 2, 300, 32)
+
+    color_active = pygame.Color('lightskyblue3')
+    color_passive = pygame.Color(250, 50, 162, 100)
+    color = color_passive
+
+    active = False
+
+    while running == True:
+        # Фон
+        screen.fill((0, 0, 0))
+        screen.blit(background, (0, 0))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pg.KEYDOWN:
+                if pg.key.get_pressed()[pg.K_ESCAPE]:
+                    running = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if input_rect.collidepoint(event.pos):
+                    active = True
+                else:
+                    active = False
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    user_text = user_text[:-1]
+                else:
+                    user_text += event.unicode
+
+            # Кнопка back
+            if event.type == pg.USEREVENT and event.button == back_button:
+                running = False
+
+            # Кнопка registr
+            if event.type == pg.USEREVENT and event.button == regist_button:
+                cur.execute(f"""INSERT INTO score (name, score) VALUES ('{user_text}', 0);""")
+                connection.commit()
+
+            if active:
+               color = color_active
+            else:
+               color = color_passive
+            regist_button.handle_event(event)
+            back_button.handle_event(event)
+
+        back_button.check_hover(pg.mouse.get_pos())
+        back_button.draw(screen)
+        regist_button.draw(screen)
+        regist_button.check_hover(pg.mouse.get_pos())
+
+        pygame.draw.rect(screen, color, input_rect, 3)
+        text_surface = base_font.render(user_text, True, (255, 255, 255))
+        screen.blit(text_surface, (input_rect.x + 5, input_rect.y + 5))
+        input_rect.w = max(100, text_surface.get_width() + 10)
+        pygame.display.flip()
+
+
+
 # Начальный экран
 def home_screen():
     # Кнопки главного меню
@@ -314,6 +388,7 @@ def home_screen():
     score_button = ImageButton(25, 260, 150, 100, 'Score.png', 'Score_hover.png', 'sounds/button.mp3')
     exit_button = ImageButton(25, 350, 150, 100, 'Exit.png', 'Exit_hover.png', 'sounds/button.mp3')
     audio_button = ImageButton(690, 450, 100, 50, 'Audio.png', 'Audio_hover.png', 'sounds/button.mp3')
+    regist_button = ImageButton(700, 200, 100, 50, 'registr.png', 'registr.png', 'sounds/button.mp3')
 
     running = True
 
@@ -348,14 +423,20 @@ def home_screen():
             if event.type == pg.USEREVENT and event.button == play_button:
                 select_level_screen()
 
+            if event.type == pg.USEREVENT and event.button == regist_button:
+                Regist()
+
             play_button.handle_event(event)
             audio_button.handle_event(event)
             score_button.handle_event(event)
             exit_button.handle_event(event)
+            regist_button.handle_event(event)
 
         # Отрисовка кнопок на главном экране + Датчик пересечения курсора с кнопкой
         play_button.draw(screen)
         play_button.check_hover(pg.mouse.get_pos())
+        regist_button.draw(screen)
+        regist_button.check_hover(pg.mouse.get_pos())
         audio_button.draw(screen)
         audio_button.check_hover(pg.mouse.get_pos())
         score_button.draw(screen)
