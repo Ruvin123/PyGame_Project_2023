@@ -2,7 +2,6 @@
 import sys
 import pygame as pg
 import os
-import player
 import level_loader
 import sqlite3
 
@@ -13,8 +12,6 @@ size = WIDTH, HEIGHT = 800, 500
 # Экран
 screen = pg.display.set_mode(size)
 pg.display.set_caption('Fantastic Islands')
-# Время
-clock = pg.time.Clock()
 
 connection = sqlite3.connect('database/pg.db')
 
@@ -58,17 +55,6 @@ def load_image(file_name, color_key=None):
 background = pg.transform.scale(load_image('Background.png'), (WIDTH, HEIGHT))
 # Фон экрана смерти
 gameoverscreen = pg.transform.scale(load_image('gameover.jpg'), (WIDTH, HEIGHT))
-
-
-# Функция загрузки уровня
-def load_level(file_name):
-    file_name = "data/" + file_name
-    with open(file_name, 'r') as mapFile:
-        level_map = [line.strip() for line in mapFile]
-
-    max_width = max(map(len, level_map))
-
-    return list(map(lambda x: x.ljust(max_width, '.'), level_map))
 
 
 # Класс анимированной кнопки
@@ -276,15 +262,16 @@ def select_level_screen():
 
             # Первый уровень
             if event.type == pg.USEREVENT and event.button == level_1_button:
-                pass
+                pg.mixer.music.stop()
+                level_loader.level_1()
 
             # Второй уровень
             if event.type == pg.USEREVENT and event.button == level_2_button:
-                pass
+                pg.mixer.music.stop()
 
             # Третий уровень
             if event.type == pg.USEREVENT and event.button == level_3_button:
-                pass
+                pg.mixer.music.stop()
 
             back_button.handle_event(event)
             level_1_button.handle_event(event)

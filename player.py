@@ -1,49 +1,62 @@
+# Импортируем модули
 import pygame as pg
-
-WIDTH, HEIGHT = 800, 500
-JUMP_POWER = 5
-GRAVITY = 0.5
-
-move_right = []
-move_left = []
 
 
 # Класс игрока
-class Hero(pg.sprite.Sprite):
-    def __init__(self, player_image, x, y, width, height, speed):
-        pg.sprite.Sprite.__init__(self)
-        self.image = pg.transform.scale(pg.image.load(player_image), (x, y))
-        self.rect = self.image.get_rect()
-        self.speed = speed
-        self.rect.x = x
-        self.rect.y = y
-        self.left = False
-        self.right = False
-        self.count = 0
-        self.health = 3
-        self.on_ground = False
-        self.x_vel = 0
-        self.y_vel = 0
+class Player(pg.sprite.Sprite):
+    # Основные настройки персонажа
+    def __init__(self, pos):
+        super().__init__()
+        self.image = pg.Surface((24, 24))
+        self.image.fill('red')
+        self.rect = self.image.get_rect(topleft=pos)
 
+        # Движение игрока
+        self.direction = pg.math.Vector2(0, 0)  # Вектор перемещения персонажа
+        self.speed = 5  # Скорость
+        self.gravity = 0.5  # Гравитация
+        self.jump_speed = -8  # Скорость прыжка
 
-class Player(Hero):
-    def update(self):
+    def player_assets(self):
+        player_path = 'player_sprites/player'
+
+        self.animations = {
+            'idle': [],
+            'run': [],
+            'jump': [],
+            'fall': []
+        }
+
+        for animation in self.animations.keys():
+            files_path = player_path + animation
+            self.animations[animation] = None  # import_folder(files_path)
+
+    # Управление персонажем
+    def get_keys(self):
+        # Получение нажатой в данный момент кнопки
         keys = pg.key.get_pressed()
-        if keys[pg.K_d] and self.rect.x > 5:
-            self.rect.x -= self.speed
-            self.left = True
-            self.right = False
-        elif keys[pg.K_a] and self.rect.x < WIDTH - 5:
-            self.rect.x += self.speed
-            self.left = False
-            self.right = True
-        elif keys[pg.K_SPACE] and self.rect.y < HEIGHT - 5:
-            pass
+
+        # Перемещение
+        if keys[pg.K_d]:
+            self.direction.x = 1
+        elif keys[pg.K_a]:
+            self.direction.x = -1
         else:
-            self.left = False
-            self.right = False
-            self.count = 0
+            self.direction.x = 0
 
-    def animation(self):
-        pass
+        # Прыжок
+        if keys[pg.K_SPACE]:
+            self.jump()
 
+    # Функция гравитации
+    def gravity_func(self):
+        self.direction.y += self.gravity
+        self.rect.y += self.direction.y
+
+    # Функция прыжка
+    def jump(self):
+        self.direction.y = self.jump_speed
+
+    # Обновление положения персонажа в пространстве
+    def update(self):
+        self.get_keys()
