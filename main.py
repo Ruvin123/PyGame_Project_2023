@@ -150,7 +150,7 @@ def score_screen():
         records[nam] = scor
 
 
-    back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png', 'sounds/button.mp3')
+    back_button = ImageButton(640, 400, 150, 100, 'Backrec.png', 'Backrec_hover.png', 'sounds/button.mp3')
 
     a = 50
 
@@ -163,7 +163,7 @@ def score_screen():
         screen.blit(recordscreen, (0, 0))
 
         for i in records.keys():
-            follow = font.render(f'{i} {records[i]}', 1, RED)
+            follow = font.render(f'{i} {records[i]}', 1, "#ffffff")
             screen.blit(follow, (WIDTH / 2 - 90, a))
             a += 25
         a = 100
