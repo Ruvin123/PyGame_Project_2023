@@ -1,5 +1,6 @@
 # Импортируем модули
 import pygame as pg
+from settings import add_folder
 
 
 # Класс игрока
@@ -7,8 +8,10 @@ class Player(pg.sprite.Sprite):
     # Основные настройки персонажа
     def __init__(self, pos):
         super().__init__()
-        self.image = pg.Surface((24, 24))
-        self.image.fill('red')
+        self.player_assets()
+        self.frame_id = 0
+        self.animation_speed = 0.25
+        self.image = self.animations['idle'][self.frame_id]
         self.rect = self.image.get_rect(topleft=pos)
 
         # Движение игрока
@@ -18,7 +21,7 @@ class Player(pg.sprite.Sprite):
         self.jump_speed = -8  # Скорость прыжка
 
     def player_assets(self):
-        player_path = 'player_sprites/player'
+        player_path = 'sprites/player/'
 
         self.animations = {
             'idle': [],
@@ -29,7 +32,7 @@ class Player(pg.sprite.Sprite):
 
         for animation in self.animations.keys():
             files_path = player_path + animation
-            self.animations[animation] = None  # import_folder(files_path)
+            self.animations[animation] = add_folder(files_path)
 
     # Управление персонажем
     def get_keys(self):

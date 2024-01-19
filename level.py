@@ -1,6 +1,6 @@
 # Импортирует модули и функции из других файлов
 import pygame as pg
-from Tiles import Tile
+from tiles import Tile
 from settings import *
 from player import Player
 

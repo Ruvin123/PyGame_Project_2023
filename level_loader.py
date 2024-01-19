@@ -2,7 +2,6 @@
 import pygame as pg
 import sys
 from settings import *
-from Tiles import Tile
 from level import Level
 
 
