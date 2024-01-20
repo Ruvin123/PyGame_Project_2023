@@ -1,89 +1,52 @@
-# Импортирует модули и функции из других файлов
 import pygame as pg
-from tiles import Tile
 from settings import *
-from player import Player
+from tiles import Tile, StaticTile, AnimatedTile
 
 
 class Level(object):
-    # Настройки уровня
     def __init__(self, level_data, surface):
         self.display_surface = surface
-        self.level_loader(level_data)
-        self.world_shift = 0  # Смещение экрана (Камера)
 
-    # Функция, которая переделывает текстовую заготовку уровня в картинку
-    def level_loader(self, layout):
-        self.tiles = pg.sprite.Group()
-        self.player = pg.sprite.GroupSingle()
+        block_layout = csv_layout(level_data['blocks'])
+        self.block_sprites = self.create_tile_group(block_layout, 'blocks')
 
-        # Перерисовка символов в блоки (Картинки) на экран
-        for row_index, row in enumerate(layout):
-            for col_index, cell in enumerate(row):
-                # Координаты определенного элемента
-                x, y = col_index * tile_size, row_index * tile_size
+        grass_decor_layout = csv_layout(level_data['grass_decor'])
+        self.grass_decor_sprites = self.create_tile_group(grass_decor_layout, 'grass_decor')
 
-                # X -> tile
-                # P -> player
-                # continue...
-                if cell == 'X':
-                    tile = Tile((x, y), tile_size)
-                    self.tiles.add(tile)
+        scores_layout = csv_layout(level_data['scores'])
+        self.score_sprites = self.create_tile_group(scores_layout, 'scores')
 
-                if cell == 'P':
-                    player_sprite = Player((x, y))
-                    self.player.add(player_sprite)
+    def create_tile_group(self, layout, type):
+        sprite_group = pg.sprite.Group()
 
-    # Функция передвижения камеры по оси Ox
-    def camera_x(self):
-        player = self.player.sprite
-        player_x = player.rect.centerx
-        direction_x = player.direction.x
+        for row_id, row in enumerate(layout):
+            for col_id, val in enumerate(row):
+                if val != '-1':
+                    x, y = col_id * tile_size, row_id * tile_size
 
-        # Установили диапазон при котором камеру будет оставать статичной по оси Ox (установлены скорость и смещение)
-        if player_x < 200 and direction_x < 0:
-            self.world_shift = 5
-            player.speed = 0
-        elif player_x > 600 and direction_x > 0:
-            self.world_shift = -5
-            player.speed = 0
-        else:
-            self.world_shift = 0
-            player.speed = 5
+                    if type == 'blocks':
+                        blocks_tile_list = cut_graphics('levels/level_data/blocks/tilemap_packed.png')
+                        tile_surface = blocks_tile_list[int(val)]
+                        sprite = StaticTile(tile_size, x, y, tile_surface)
 
-    # Функция столкновения модельки персонажа  объектами по оси Ox
-    def horizontal_collision(self):
-        player = self.player.sprite
-        player.rect.x += player.direction.x * player.speed
+                    if type == 'grass_decor':
+                        grass_decor_tile_list = cut_graphics('levels/level_data/blocks/tilemap_packed.png')
+                        tile_surface = grass_decor_tile_list[int(val)]
+                        sprite = StaticTile(tile_size, x, y, tile_surface)
 
-        # Проверка на пересечение спрайта блока со спрайтом игрока по оси Ох
-        for sprite in self.tiles.sprites():
-            if sprite.rect.colliderect(player.rect):
-                if player.direction.x < 0:
-                    player.rect.left = sprite.rect.right
-                elif player.direction.x > 0:
-                    player.rect.right = sprite.rect.left
+                    if type == 'scores':
+                        sprite = AnimatedTile(tile_size, x, y, 'level/level_data/coins') # Добавить спрайты монет
 
-    def vertical_collision(self):
-        player = self.player.sprite
-        player.gravity_func()
+                    sprite_group.add(sprite)
 
-        for sprite in self.tiles.sprites():
-            if sprite.rect.colliderect(player.rect):
-                if player.direction.y > 0:
-                    player.rect.bottom = sprite.rect.top
-                    player.direction.y = 0
-                elif player.direction.y < 0:
-                    player.rect.top = sprite.rect.bottom
-                    player.direction.y = 0
+        return sprite_group
 
     def run(self):
-        # Блоки уровня
-        self.tiles.update(self.world_shift)
-        self.tiles.draw(self.display_surface)
-        self.camera_x()
-        # Игрок
-        self.player.update()
-        self.player.draw(self.display_surface)
-        self.horizontal_collision()
-        self.vertical_collision()
+        self.block_sprites.draw(self.display_surface)
+        self.grass_decor_sprites.draw(self.display_surface)
+        self.score_sprites.draw(self.display_surface)
+
+        self.grass_decor_sprites.update(-1)
+        self.block_sprites.update(-1)
+        self.score_sprites.update(-1)
+

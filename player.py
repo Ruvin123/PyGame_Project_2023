@@ -10,15 +10,18 @@ class Player(pg.sprite.Sprite):
         super().__init__()
         self.player_assets()
         self.frame_id = 0
-        self.animation_speed = 0.25
+        self.animation_speed = 0.1
         self.image = self.animations['idle'][self.frame_id]
         self.rect = self.image.get_rect(topleft=pos)
 
         # Движение игрока
         self.direction = pg.math.Vector2(0, 0)  # Вектор перемещения персонажа
-        self.speed = 5  # Скорость
-        self.gravity = 0.5  # Гравитация
-        self.jump_speed = -8  # Скорость прыжка
+        self.speed = 3  # Скорость
+        self.gravity = 0.3  # Гравитация
+        self.jump_speed = -6 # Скорость прыжка
+
+        self.status = 'idle'
+        self.left = True
 
     def player_assets(self):
         player_path = 'sprites/player/'
@@ -34,6 +37,21 @@ class Player(pg.sprite.Sprite):
             files_path = player_path + animation
             self.animations[animation] = add_folder(files_path)
 
+    def animate(self):
+        animation = self.animations[self.status]
+
+        self.frame_id += self.animation_speed
+        if self.frame_id >= len(animation):
+            self.frame_id = 0
+
+        image = animation[int(self.frame_id)]
+
+        if self.left:
+            self.image = image
+        else:
+            mirror_image = pg.transform.flip(image, True, False)
+            self.image = mirror_image
+
     # Управление персонажем
     def get_keys(self):
         # Получение нажатой в данный момент кнопки
@@ -42,14 +60,30 @@ class Player(pg.sprite.Sprite):
         # Перемещение
         if keys[pg.K_d]:
             self.direction.x = 1
+            self.left = False
         elif keys[pg.K_a]:
             self.direction.x = -1
+            self.left = True
         else:
             self.direction.x = 0
 
         # Прыжок
         if keys[pg.K_SPACE]:
             self.jump()
+
+    def get_status(self):
+        if self.direction.y < 0:
+            self.status = 'jump'
+        elif self.direction.y > 0:
+            self.status = 'fall'
+        else:
+            if self.direction.x != 0:
+                self.status = 'run'
+            else:
+                self.status = 'idle'
+
+    def run_particles(self):
+        pass
 
     # Функция гравитации
     def gravity_func(self):
@@ -63,3 +97,5 @@ class Player(pg.sprite.Sprite):
     # Обновление положения персонажа в пространстве
     def update(self):
         self.get_keys()
+        self.get_status()
+        self.animate()
