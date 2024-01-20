@@ -55,6 +55,8 @@ def load_image(file_name, color_key=None):
 background = pg.transform.scale(load_image('Background.png'), (WIDTH, HEIGHT))
 # Фон экрана смерти
 gameoverscreen = pg.transform.scale(load_image('gameover.jpg'), (WIDTH, HEIGHT))
+# Фон экрана рекордов
+recordscreen = pg.transform.scale(load_image('records.jpg'), (WIDTH, HEIGHT))
 
 
 # Класс анимированной кнопки
@@ -135,18 +137,36 @@ def game_over_screen():
 def score_screen():
     running = True
 
-    back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png', 'sounds/button.mp3')
+    record = cur.execute('''SELECT name, score FROM score''')
+
+    records_ = {}
+
+    for nam, scor in record:
+        records_[nam] = scor
+
+    records_ = sorted(records_.items(), key=lambda x: x[1], reverse=True)
+
+    for nam, scor in records_:
+        records[nam] = scor
+
+
+    back_button = ImageButton(640, 400, 150, 100, 'Backrec.png', 'Backrec_hover.png', 'sounds/button.mp3')
+
+    a = 50
 
     follow = None
 
-    for i in records.keys():
-        follow = font.render(f'{i} {records[i]}', 1, RED)
 
     while running:
         # Фон главного меню
         screen.fill((0, 0, 0))
-        screen.blit(background, (0, 0))
-        screen.blit(follow, (0, 0))
+        screen.blit(recordscreen, (0, 0))
+
+        for i in records.keys():
+            follow = font.render(f'{i} {records[i]}', 1, "#ffffff")
+            screen.blit(follow, (WIDTH / 2 - 90, a))
+            a += 25
+        a = 100
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
