@@ -25,7 +25,8 @@ class StaticTile(Tile):
 class AnimatedTile(Tile):
     def __init__(self, size, x, y, path):
         super().__init__(size, x, y)
-        self.frames = import_folder('\sprites\score')
+        self.frames = import_folder('sprites/score/sprite_score.png')
+        self.frame_index = 0
 
         def animate(self):
             self.frame_index += 0.15
@@ -39,7 +40,7 @@ class AnimatedTile(Tile):
 
 
 class Coin(AnimatedTile):
-    def __init__(self, size, x, y, path='\sprites\score'):
+    def __init__(self, size, x, y, path='sprites/score/sprite_score.png'):
         super().__init__(size, x, y, path)
         center_x = x + int(size / 2)
         center_y = y + int(size / 2)

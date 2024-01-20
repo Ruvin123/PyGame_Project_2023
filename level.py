@@ -35,7 +35,7 @@ class Level(object):
                         sprite = StaticTile(tile_size, x, y, tile_surface)
 
                     if type == 'scores':
-                        sprite = AnimatedTile(tile_size, x, y, 'level/level_data/coins') # Добавить спрайты монет
+                        sprite = AnimatedTile(tile_size, x, y, 'sprites/score/sprite_score.png') # Добавить спрайты монет
 
                     sprite_group.add(sprite)
 
