@@ -23,7 +23,7 @@ def level_1():
                 pg.quit()
                 sys.exit()
 
-        screen.fill('black')
+        screen.fill('cyan')
         level.run()
         pg.display.update()
         clock.tick(FPS)

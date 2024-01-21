@@ -18,10 +18,12 @@ class Player(pg.sprite.Sprite):
         self.direction = pg.math.Vector2(0, 0)  # Вектор перемещения персонажа
         self.speed = 3  # Скорость
         self.gravity = 0.3  # Гравитация
-        self.jump_speed = -6 # Скорость прыжка
+        self.jump_speed = -5 # Скорость прыжка
 
         self.status = 'idle'
         self.left = True
+        self.on_ground = False
+        self.on_ceil = False
 
     def player_assets(self):
         player_path = 'sprites/player/'
@@ -68,7 +70,7 @@ class Player(pg.sprite.Sprite):
             self.direction.x = 0
 
         # Прыжок
-        if keys[pg.K_SPACE]:
+        if keys[pg.K_SPACE] and self.on_ground:
             self.jump()
 
     def get_status(self):
@@ -82,9 +84,6 @@ class Player(pg.sprite.Sprite):
             else:
                 self.status = 'idle'
 
-    def run_particles(self):
-        pass
-
     # Функция гравитации
     def gravity_func(self):
         self.direction.y += self.gravity
@@ -92,7 +91,11 @@ class Player(pg.sprite.Sprite):
 
     # Функция прыжка
     def jump(self):
-        self.direction.y = self.jump_speed
+        if self.on_ground:
+            self.direction.y = self.jump_speed
+        else:
+            self.on_ground = True
+
 
     # Обновление положения персонажа в пространстве
     def update(self):

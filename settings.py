@@ -4,6 +4,7 @@ import pygame as pg
 from csv import reader
 
 # Скелеты и базовые настроики уровней
+# Карта уровня 1
 level_map_1 = {
     'blocks': 'levels/level_1/level_1_blocks.csv',
     'constraints': 'levels/level_1/level_1_constraints.csv',
@@ -14,11 +15,13 @@ level_map_1 = {
     'trees': 'levels/level_1/level_1_trees.csv',
     'trees_top': 'levels/level_1/level_1_trees_top.csv'
 }
-number_tile_y = 20
+number_tile_y, number_tile_x = 19, 79
 tile_size = 18
+enemy_size = 24
 WIDTH, HEIGHT = 800, number_tile_y * tile_size
 
 
+# Функция, которая фозвращает картинки из заданной папки
 def add_folder(path):
     screen_list = []
 
@@ -31,6 +34,8 @@ def add_folder(path):
     return screen_list
 
 
+# Загрузчик уровней
+# Читает CSV формат и возвращает его построчно в формате списка
 def csv_layout(path):
     level_map = []
 
@@ -42,21 +47,21 @@ def csv_layout(path):
     return level_map
 
 
+# Вырезка тайлов
 def cut_graphics(path):
+    # Загружаем тайлсет
     surface = pg.image.load(path)
+    # Находим по Ох и по Оу сколько тайлов располагается
     tile_num_x, tile_num_y = int(surface.get_size()[0] / tile_size), int(surface.get_size()[1] / tile_size)
 
+    # Список вырезанных тайлов
     cut_tiles = []
+    # Цикл, который вырезает и добавляет тайлы в список
     for row in range(tile_num_y):
         for col in range(tile_num_x):
             x, y = col * tile_size, row * tile_size
-            new_surf = pg.Surface((tile_size, tile_size))
+            new_surf = pg.Surface((tile_size, tile_size), flags=pg.SRCALPHA)
             new_surf.blit(surface, (0, 0), pg.Rect(x, y, tile_size, tile_size))
             cut_tiles.append(new_surf)
 
     return cut_tiles
-
-
-def import_folder(path):
-    for information in walk(path):
-        pass
