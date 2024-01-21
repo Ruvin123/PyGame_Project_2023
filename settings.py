@@ -14,10 +14,10 @@ level_map_1 = {
     'trees': 'levels/level_1/level_1_trees.csv',
     'trees_top': 'levels/level_1/level_1_trees_top.csv'
 }
-number_tile_y = 20
+number_tile_y, number_tile_x = 19, 79
 tile_size = 18
+enemy_size = 24
 WIDTH, HEIGHT = 800, number_tile_y * tile_size
-
 
 def add_folder(path):
     screen_list = []
@@ -57,6 +57,11 @@ def cut_graphics(path):
     return cut_tiles
 
 
-def import_folder(path):
-    for information in walk(path):
-        pass
+def import_folder(path='sprites/score'):
+    surface_list = []
+
+    for _, __, image_files in walk('sprites/score'):
+        for image_ in image_files:
+            full_path = path + '/' + image_
+            image_surf = pg.image.load('sprites/score/sprite_score.png').convert_alpha()
+            surface_list.append(image_surf)
