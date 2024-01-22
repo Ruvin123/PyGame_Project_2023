@@ -22,6 +22,9 @@ record = cur.execute('''SELECT name, score FROM score''')
 
 RED = (250, 0, 0)
 
+Check = False
+names = ''
+
 records = {}
 
 for name, score in record:
@@ -155,7 +158,6 @@ def game_over_screen(level_id):
 # Доработать
 def score_screen():
     running = True
-
     record = cur.execute('''SELECT name, score FROM score''')
 
     records_ = {}
@@ -273,7 +275,6 @@ def audio_screen():
 
 # Экран новой игры
 def select_level_screen():
-
     running = True
 
     back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png', 'sounds/button.mp3')
@@ -307,11 +308,9 @@ def select_level_screen():
             if event.type == pg.USEREVENT and event.button == level_2_button:
                 pg.mixer.music.stop()
 
-
             # Третий уровень
             if event.type == pg.USEREVENT and event.button == level_3_button:
                 pg.mixer.music.stop()
-
 
             back_button.handle_event(event)
             level_1_button.handle_event(event)
@@ -335,8 +334,10 @@ def select_level_screen():
 def register():
     running = True
 
-    register_button = ImageButton(WIDTHS_MENU // 2 - 50, HEIGHT_MENU // 2 + 50, 100, 32, 'registr.png',
-                                  'registr_hover.png',
+    global names
+    global Check
+
+    register_button = ImageButton(WIDTHS_MENU // 2 - 50, HEIGHT_MENU // 2 + 50, 100, 32, 'registr.png', 'registr_hover.png',
                                   'sounds/button.mp3')
     back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png', 'sounds/button.mp3')
 
@@ -384,6 +385,8 @@ def register():
             if event.type == pg.USEREVENT and event.button == register_button:
                 cur.execute(f"""INSERT INTO score (name, score) VALUES ('{user_text}', 0);""")
                 connection.commit()
+                Check = True
+                names = user_text
 
             if active:
                 color = color_active
