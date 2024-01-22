@@ -2,7 +2,7 @@ import pygame as pg
 from settings import *
 from tiles import Tile, StaticTile, AnimatedTile, Coin, Enemy
 from player import Player
-from main import game_over_screen, select_level_screen
+from main import game_over_screen, select_level_screen, Check, names, cur
 from particle import ParticleEffect
 
 
@@ -180,6 +180,10 @@ class Level(object):
         if collided_coins:
             for coin in collided_coins:
                 self.change_coin(1)
+
+        if Check:
+            cur.execute(f"""INSERT INTO score (name, score) VALUES ('{names}', {coin});""")
+
 
     def run(self):
         self.background.draw(self.display_surface)

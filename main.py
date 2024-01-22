@@ -22,6 +22,9 @@ record = cur.execute('''SELECT name, score FROM score''')
 
 RED = (250, 0, 0)
 
+Check = False
+names = ''
+
 records = {}
 
 for name, score in record:
@@ -145,7 +148,6 @@ def game_over_screen():
 # Доработать
 def score_screen():
     running = True
-
     record = cur.execute('''SELECT name, score FROM score''')
 
     records_ = {}
@@ -157,7 +159,6 @@ def score_screen():
 
     for nam, scor in records_:
         records[nam] = scor
-
 
     back_button = ImageButton(640, 400, 150, 100, 'Backrec.png', 'Backrec_hover.png', 'sounds/button.mp3')
 
@@ -324,6 +325,9 @@ def select_level_screen():
 def register():
     running = True
 
+    global names
+    global Check
+
     register_button = ImageButton(WIDTHS_MENU // 2 - 50, HEIGHT_MENU // 2 + 50, 100, 32, 'registr.png', 'registr_hover.png',
                                   'sounds/button.mp3')
     back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png', 'sounds/button.mp3')
@@ -372,6 +376,8 @@ def register():
             if event.type == pg.USEREVENT and event.button == register_button:
                 cur.execute(f"""INSERT INTO score (name, score) VALUES ('{user_text}', 0);""")
                 connection.commit()
+                Check = True
+                names = user_text
 
             if active:
                 color = color_active

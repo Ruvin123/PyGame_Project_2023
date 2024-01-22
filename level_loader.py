@@ -5,9 +5,12 @@ from settings import *
 from level import Level
 from UI import UI
 
+coin = 0
+
 
 class Game(object):
     def __init__(self, current_level, surface):
+        global coin
         self.health = 3
         self.cur_health = 3
         self.coin = 0
