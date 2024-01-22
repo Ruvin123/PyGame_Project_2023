@@ -3,6 +3,26 @@ import pygame as pg
 import sys
 from settings import *
 from level import Level
+from UI import UI
+
+
+class Game(object):
+    def __init__(self, current_level, surface):
+        self.health = 3
+        self.cur_health = 3
+        self.coin = 0
+
+        self.level = Level(current_level, surface, self.change_coin)
+
+        self.ui = UI(surface)
+
+    def change_coin(self, amount):
+        self.coin += amount
+
+    def run(self):
+        self.level.run()
+        self.ui.show_health(self.cur_health, self.health)
+        self.ui.show_coins(self.coin)
 
 
 # Уровень №1
@@ -14,7 +34,7 @@ def level_1():
     FPS = 60
 
     # Загрузка уровня на экран
-    level = Level(level_map_1, screen)
+    game = Game(level_map_1, screen)
 
     # Основной цикл игры
     while True:
@@ -23,8 +43,8 @@ def level_1():
                 pg.quit()
                 sys.exit()
 
-        level.run()
         screen.fill('black')
+        game.run()
         pg.display.update()
         clock.tick(FPS)
 

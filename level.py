@@ -2,10 +2,11 @@ import pygame as pg
 from settings import *
 from tiles import Tile, StaticTile, AnimatedTile, Coin, Enemy
 from player import Player
+from main import game_over_screen, select_level_screen
 
 
 class Level(object):
-    def __init__(self, level_data, surface):
+    def __init__(self, level_data, surface, change_coin):
         self.display_surface = surface
         self.world_shift = 0
 
@@ -13,6 +14,8 @@ class Level(object):
         self.player = pg.sprite.GroupSingle()
         self.end = pg.sprite.GroupSingle()
         self.player_setup(player_layout)
+
+        self.change_coin = change_coin
 
         grass_decor_layout = csv_layout(level_data['grass_decor'])
         self.grass_decor_sprites = self.create_tile_group(grass_decor_layout, 'grass_decor')
@@ -36,6 +39,7 @@ class Level(object):
         self.block_sprites = self.create_tile_group(block_layout, 'blocks')
 
         self.water = Water(HEIGHT - 18)
+        self.background = Background()
 
     def create_tile_group(self, layout, type):
         sprite_group = pg.sprite.Group()
@@ -98,6 +102,21 @@ class Level(object):
                     sprite = StaticTile(tile_size, x + 1, y, door_surface)
                     self.end.add(sprite)
 
+    def camera_x(self):
+        player = self.player.sprite
+        player_x = player.rect.centerx
+        direction_x = player.direction.x
+
+        if player_x < WIDTH / 4 and direction_x < 0:
+            self.world_shift = 3
+            player.speed = 0
+        elif player_x > WIDTH - (WIDTH / 4) and direction_x > 0:
+            self.world_shift = -3
+            player.speed = 0
+        else:
+            self.world_shift = 0
+            player.speed = 3
+
     def horizontal_collision(self):
         player = self.player.sprite
         player.rect.x += player.direction.x * player.speed
@@ -131,7 +150,34 @@ class Level(object):
             if player.on_ceil and player.direction.y > 0:
                 player.on_ceil = False
 
+    def check_enemy_collisions(self):
+        enemy_collisions = pg.sprite.spritecollide(self.player.sprite, self.enemies_sprites, 0)
+
+        if enemy_collisions:
+            for enemy in enemy_collisions:
+                enemy_center = enemy.rect.centery
+                enemy_top = enemy.rect.top
+                player_bottom = self.player.sprite.rect.bottom
+                if enemy_top < player_bottom < enemy_center and self.player.sprite.direction.y >= 0:
+                    self.player.sprite.direction.y = -5
+                    enemy.kill()
+
+    def win(self):
+        if pg.sprite.spritecollide(self.player.sprite, self.end, 0):
+            select_level_screen()
+
+    def death(self):
+        if self.player.sprite.rect.top > HEIGHT - 28:
+            game_over_screen()
+
+    def collide_coin(self):
+        collided_coins = pg.sprite.spritecollide(self.player.sprite, self.score_sprites, 1)
+        if collided_coins:
+            for coin in collided_coins:
+                self.change_coin(1)
+
     def run(self):
+        self.background.draw(self.display_surface)
         # Отрисовка объектов на карте
         self.grass_decor_sprites.draw(self.display_surface)
         self.score_sprites.draw(self.display_surface)
@@ -157,14 +203,30 @@ class Level(object):
         self.end.update(self.world_shift)
         self.end.draw(self.display_surface)
 
+        self.collide_coin()
+        self.check_enemy_collisions()
+        self.win()
+        self.death()
+
         # Отрисовка воды на экране
         self.water.draw(self.display_surface, self.world_shift)
 
         # Отображение игрока
         self.player.update()
         self.player.draw(self.display_surface)
+        self.camera_x()
         self.horizontal_collision()
         self.vertical_collision()
+
+
+class Background(object):
+    def __init__(self):
+        self.background = pg.image.load('levels/level_data/backgrounds/background_level_1.png').convert()
+
+        self.background = pg.transform.scale(self.background, (WIDTH, HEIGHT))
+
+    def draw(self, surface):
+        surface.blit(self.background, (0, 0))
 
 
 class Water(object):

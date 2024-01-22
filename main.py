@@ -8,7 +8,7 @@ import sqlite3
 # Основные настройки
 pg.init()
 FPS = 60
-size = WIDTH, HEIGHT = 800, 500
+size = WIDTHS_MENU, HEIGHT_MENU = 800, 500
 # Экран
 screen = pg.display.set_mode(size)
 pg.display.set_caption('Fantastic Islands')
@@ -52,29 +52,29 @@ def load_image(file_name, color_key=None):
 
 
 # Фон главного меню
-background = pg.transform.scale(load_image('Background.png'), (WIDTH, HEIGHT))
+background = pg.transform.scale(load_image('Background.png'), (WIDTHS_MENU, HEIGHT_MENU))
 # Фон экрана смерти
-gameoverscreen = pg.transform.scale(load_image('gameover.jpg'), (WIDTH, HEIGHT))
+gameoverscreen = pg.transform.scale(load_image('gameover.jpg'), (WIDTHS_MENU, HEIGHT_MENU))
 # Фон экрана рекордов
-recordscreen = pg.transform.scale(load_image('records.jpg'), (WIDTH, HEIGHT))
+recordscreen = pg.transform.scale(load_image('records.jpg'), (WIDTHS_MENU, HEIGHT_MENU))
 
 
 # Класс анимированной кнопки
 class ImageButton(object):
-    def __init__(self, x, y, width, height, image_name, hover_image_path=None, sound_path=None):
+    def __init__(self, x, y, WIDTHS_MENU, HEIGHT_MENU, image_name, hover_image_path=None, sound_path=None):
         # Параметры кнопки
         self.x = x
         self.y = y
-        self.width = width
-        self.height = height
+        self.WIDTHS_MENU = WIDTHS_MENU
+        self.HEIGHT_MENU = HEIGHT_MENU
 
         # Картинка кнопки
-        self.image = pg.transform.scale(load_image(image_name), (width, height))
+        self.image = pg.transform.scale(load_image(image_name), (WIDTHS_MENU, HEIGHT_MENU))
         self.hover_image = self.image
 
         # Картинка задействованной кнопки
         if hover_image_path:
-            self.hover_image = pg.transform.scale(load_image(hover_image_path), (width, height))
+            self.hover_image = pg.transform.scale(load_image(hover_image_path), (WIDTHS_MENU, HEIGHT_MENU))
         self.rect = self.image.get_rect(topleft=(x, y))
 
         # Звук кнопки
@@ -102,9 +102,9 @@ class ImageButton(object):
 def game_over_screen():
     running = True
 
-    exit_button = ImageButton(20, 20, 150, 100, 'Exit_game_over.png', 'Exit_game_over.png', 'sounds/button.mp3')
-    restart_button = ImageButton(780, 480, 150, 100, 'Reset.png', 'Reset_hover.png', 'sounds/button.mp3')
-    main_menu_button = ImageButton(390, 240, 150, 100, 'Menu.png', 'Menu_hover.png', 'sounds/button.mp3')
+    exit_button = ImageButton(0, 150, 150, 80, 'Exit_game_over.png', 'Exit_game_over_hover.png', 'sounds/button.mp3')
+    restart_button = ImageButton(650, 150, 150, 80, 'Reset.png', 'Reset_hover.png', 'sounds/button.mp3')
+    main_menu_button = ImageButton(325, 150, 150, 80, 'Menu.png', 'Menu_hover.png', 'sounds/button.mp3')
     while running:
         screen.fill((0, 0, 0))
         screen.blit(gameoverscreen, (0, 0))
@@ -114,22 +114,31 @@ def game_over_screen():
                 running = False
                 terminate()
 
-            if event.button == exit_button:
+            if event.type == pg.USEREVENT and event.button == exit_button:
                 running = False
                 terminate()
 
-            exit_button.handle_event(event)
-
-            if event.button == restart_button:
+            if event.type == pg.USEREVENT and event.button == restart_button:
                 select_level_screen()
 
-            if event.button == main_menu_button:
+            if event.type == pg.USEREVENT and event.button == main_menu_button:
                 home_screen()
+
+            exit_button.handle_event(event)
+            restart_button.handle_event(event)
+            main_menu_button.handle_event(event)
 
         exit_button.draw(screen)
         exit_button.check_hover(pg.mouse.get_pos())
+
+        restart_button.draw(screen)
+        restart_button.check_hover(pg.mouse.get_pos())
+
+        main_menu_button.draw(screen)
+        main_menu_button.check_hover(pg.mouse.get_pos())
         # Отрисовка дисплея
         pg.display.flip()
+        pg.display.update()
 
 
 # Экран рекордов
@@ -164,7 +173,7 @@ def score_screen():
 
         for i in records.keys():
             follow = font.render(f'{i} {records[i]}', 1, "#ffffff")
-            screen.blit(follow, (WIDTH / 2 - 90, a))
+            screen.blit(follow, (WIDTHS_MENU / 2 - 90, a))
             a += 25
         a = 100
 
@@ -315,13 +324,13 @@ def select_level_screen():
 def register():
     running = True
 
-    register_button = ImageButton(WIDTH // 2 - 50, HEIGHT // 2 + 50, 100, 32, 'registr.png', 'registr_hover.png',
+    register_button = ImageButton(WIDTHS_MENU // 2 - 50, HEIGHT_MENU // 2 + 50, 100, 32, 'registr.png', 'registr_hover.png',
                                   'sounds/button.mp3')
     back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png', 'sounds/button.mp3')
 
     base_font = pg.font.Font(None, 32)
     user_text = ''
-    input_rect = pg.Rect(WIDTH // 2 - 50, HEIGHT // 2, 300, 32)
+    input_rect = pg.Rect(WIDTHS_MENU // 2 - 50, HEIGHT_MENU // 2, 300, 32)
 
     color_active = pg.Color('lightskyblue3')
     color_passive = pg.Color(250, 50, 162, 100)
@@ -379,7 +388,7 @@ def register():
         pg.draw.rect(screen, color, input_rect, 3)
         text_surface = base_font.render(user_text, True, (255, 255, 255))
         screen.blit(text_surface, (input_rect.x + 5, input_rect.y + 5))
-        input_rect.w = max(100, text_surface.get_width() + 10)
+        input_rect.w = max(100, text_surface.get_WIDTHS_MENU() + 10)
         pg.display.flip()
 
 
