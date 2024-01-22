@@ -103,11 +103,14 @@ class ImageButton(object):
 
 # Экран проигрыша
 def game_over_screen(level_id):
+
+    pg.mixer_music.stop()
+
     running = True
 
-    exit_button = ImageButton(0, 150, 150, 80, 'Exit_game_over.png', 'Exit_game_over_hover.png', 'sounds/button.mp3')
-    restart_button = ImageButton(650, 150, 150, 80, 'Reset.png', 'Reset_hover.png', 'sounds/button.mp3')
-    main_menu_button = ImageButton(325, 150, 150, 80, 'Menu.png', 'Menu_hover.png', 'sounds/button.mp3')
+    exit_button = ImageButton(0, 410, 150, 80, 'Exit_game_over.png', 'Exit_game_over_hover.png', 'sounds/button.mp3')
+    restart_button = ImageButton(650, 410, 150, 80, 'Reset.png', 'Reset_hover.png', 'sounds/button.mp3')
+    main_menu_button = ImageButton(325, 410, 150, 80, 'Menu.png', 'Menu_hover.png', 'sounds/button.mp3')
     while running:
         screen.fill((0, 0, 0))
         screen.blit(gameoverscreen, (0, 0))
@@ -122,6 +125,7 @@ def game_over_screen(level_id):
                 terminate()
 
             if event.type == pg.USEREVENT and event.button == restart_button:
+                pg.mixer_music.play(-1)
                 if level_id == 1:
                     level_loader.level_1()
                     running = False
@@ -214,7 +218,7 @@ def audio_screen():
     running = True
 
     click = pg.mixer.Sound('sounds/button.mp3')
-    volume = 1
+    volume = 0.5
     play = True
     back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png', 'sounds/button.mp3')
     audio_pad = ImageButton(125, 20, 500, 400, 'Vol_pad.png')
@@ -301,16 +305,15 @@ def select_level_screen():
 
             # Первый уровень
             if event.type == pg.USEREVENT and event.button == level_1_button:
-                pg.mixer.music.stop()
                 level_loader.level_1()
 
             # Второй уровень
             if event.type == pg.USEREVENT and event.button == level_2_button:
-                pg.mixer.music.stop()
+                level_loader.level_2()
 
             # Третий уровень
             if event.type == pg.USEREVENT and event.button == level_3_button:
-                pg.mixer.music.stop()
+                level_loader.level_3()
 
             back_button.handle_event(event)
             level_1_button.handle_event(event)
@@ -413,14 +416,14 @@ def home_screen():
     play_button = ImageButton(25, 150, 200, 125, 'Play.png', 'Play_hover.png', 'sounds/button.mp3')
     score_button = ImageButton(25, 260, 150, 100, 'Score.png', 'Score_hover.png', 'sounds/button.mp3')
     exit_button = ImageButton(25, 350, 150, 100, 'Exit.png', 'Exit_hover.png', 'sounds/button.mp3')
-    audio_button = ImageButton(690, 450, 100, 50, 'Audio.png', 'Audio_hover.png', 'sounds/button.mp3')
+    audio_button = ImageButton(700, 400, 100, 50, 'Audio.png', 'Audio_hover.png', 'sounds/button.mp3')
     register_button = ImageButton(700, 200, 100, 50, 'registr.png', 'registr.png', 'sounds/button.mp3')
 
     running = True
 
     # Музыка игры
-    pg.mixer.music.load('sounds/main_menu.mp3')
-    pg.mixer_music.play()
+    pg.mixer.music.load('sounds/music.mp3')
+    pg.mixer_music.play(-1)
 
     while running:
         # Фон главного меню

@@ -16,8 +16,26 @@ level_map_1 = {
     'trees_top': 'levels/level_1/level_1_trees_top.csv'
 }
 level_map_2 = {
-
+    'blocks': 'levels/level_2/level_2_blocks.csv',
+    'constraints': 'levels/level_2/level_2_constraints.csv',
+    'enemies': 'levels/level_2/level_2_enemies.csv',
+    'grass_decor': 'levels/level_2/level_2_grass_decor.csv',
+    'player': 'levels/level_2/level_2_player.csv',
+    'scores': 'levels/level_2/level_2_scores.csv',
+    'trees': 'levels/level_2/level_2_trees.csv',
+    'trees_top': 'levels/level_2/level_2_trees_top.csv'
 }
+level_map_3 = {
+    'blocks': 'levels/level_3/level_3_blocks.csv',
+    'constraints': 'levels/level_3/level_3_constraints.csv',
+    'enemies': 'levels/level_3/level_3_enemies.csv',
+    'grass_decor': 'levels/level_3/level_3_grass_decor.csv',
+    'player': 'levels/level_3/level_3_player.csv',
+    'scores': 'levels/level_3/level_3_scores.csv',
+    'trees': 'levels/level_3/level_3_trees.csv',
+    'trees_top': 'levels/level_3/level_3_trees_top.csv'
+}
+# Основные настройки уровня
 number_tile_y, number_tile_x = 27, 79
 tile_size = 18
 enemy_size = 24
