@@ -99,7 +99,7 @@ class ImageButton(object):
 
 
 # Экран проигрыша
-def game_over_screen():
+def game_over_screen(level_id):
     running = True
 
     exit_button = ImageButton(0, 150, 150, 80, 'Exit_game_over.png', 'Exit_game_over_hover.png', 'sounds/button.mp3')
@@ -119,7 +119,17 @@ def game_over_screen():
                 terminate()
 
             if event.type == pg.USEREVENT and event.button == restart_button:
-                select_level_screen()
+                if level_id == 1:
+                    level_loader.level_1()
+                    running = False
+
+                elif level_id == 2:
+                    level_loader.level_2()
+                    running = False
+
+                else:
+                    running = False
+                    level_loader.level_3()
 
             if event.type == pg.USEREVENT and event.button == main_menu_button:
                 home_screen()
@@ -158,13 +168,11 @@ def score_screen():
     for nam, scor in records_:
         records[nam] = scor
 
-
     back_button = ImageButton(640, 400, 150, 100, 'Backrec.png', 'Backrec_hover.png', 'sounds/button.mp3')
 
     a = 50
 
     follow = None
-
 
     while running:
         # Фон главного меню
@@ -265,6 +273,7 @@ def audio_screen():
 
 # Экран новой игры
 def select_level_screen():
+
     running = True
 
     back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png', 'sounds/button.mp3')
@@ -298,9 +307,11 @@ def select_level_screen():
             if event.type == pg.USEREVENT and event.button == level_2_button:
                 pg.mixer.music.stop()
 
+
             # Третий уровень
             if event.type == pg.USEREVENT and event.button == level_3_button:
                 pg.mixer.music.stop()
+
 
             back_button.handle_event(event)
             level_1_button.handle_event(event)
@@ -324,7 +335,8 @@ def select_level_screen():
 def register():
     running = True
 
-    register_button = ImageButton(WIDTHS_MENU // 2 - 50, HEIGHT_MENU // 2 + 50, 100, 32, 'registr.png', 'registr_hover.png',
+    register_button = ImageButton(WIDTHS_MENU // 2 - 50, HEIGHT_MENU // 2 + 50, 100, 32, 'registr.png',
+                                  'registr_hover.png',
                                   'sounds/button.mp3')
     back_button = ImageButton(640, 400, 150, 100, 'Back.png', 'Back_hover.png', 'sounds/button.mp3')
 

@@ -7,12 +7,12 @@ from UI import UI
 
 
 class Game(object):
-    def __init__(self, current_level, surface):
+    def __init__(self, current_level, surface, level_id):
         self.health = 3
         self.cur_health = 3
         self.coin = 0
 
-        self.level = Level(current_level, surface, self.change_coin)
+        self.level = Level(current_level, surface, self.change_coin, level_id)
 
         self.ui = UI(surface)
 
@@ -34,7 +34,7 @@ def level_1():
     FPS = 60
 
     # Загрузка уровня на экран
-    game = Game(level_map_1, screen)
+    game = Game(level_map_1, screen, 1)
 
     # Основной цикл игры
     while True:

@@ -22,7 +22,7 @@ class Player(pg.sprite.Sprite):
 
         self.status = 'idle'
         self.left = True
-        self.on_ground = False
+        self.on_ground = True
         self.on_ceil = False
 
     def player_assets(self):
@@ -76,7 +76,7 @@ class Player(pg.sprite.Sprite):
     def get_status(self):
         if self.direction.y < 0:
             self.status = 'jump'
-        elif self.direction.y > 0:
+        elif self.direction.y > 1:
             self.status = 'fall'
         else:
             if self.direction.x != 0:

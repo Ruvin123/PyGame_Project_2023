@@ -7,9 +7,10 @@ from particle import ParticleEffect
 
 
 class Level(object):
-    def __init__(self, level_data, surface, change_coin):
+    def __init__(self, level_data, surface, change_coin, index):
         self.display_surface = surface
         self.world_shift = 0
+        self.level_id = index
 
         player_layout = csv_layout(level_data['player'])
         self.player = pg.sprite.GroupSingle()
@@ -173,7 +174,7 @@ class Level(object):
 
     def death(self):
         if self.player.sprite.rect.top > HEIGHT:
-            game_over_screen()
+            game_over_screen(self.level_id)
 
     def collide_coin(self):
         collided_coins = pg.sprite.spritecollide(self.player.sprite, self.score_sprites, 1)
@@ -201,8 +202,8 @@ class Level(object):
 
         # Границы врагов
         self.constraints_sprites.update(self.world_shift)
-        #self.explosion.update(self.world_shift)
-        #self.explosion.draw(self.display_surface)
+        self.explosion.update(self.world_shift)
+        self.explosion.draw(self.display_surface)
 
         # Поворот врагов, когда они дошли границы
         self.enemy_reverse()
