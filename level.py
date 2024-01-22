@@ -3,6 +3,7 @@ from settings import *
 from tiles import Tile, StaticTile, AnimatedTile, Coin, Enemy
 from player import Player
 from main import game_over_screen, select_level_screen
+from particle import ParticleEffect
 
 
 class Level(object):
@@ -16,6 +17,8 @@ class Level(object):
         self.player_setup(player_layout)
 
         self.change_coin = change_coin
+
+        self.explosion = pg.sprite.Group()
 
         grass_decor_layout = csv_layout(level_data['grass_decor'])
         self.grass_decor_sprites = self.create_tile_group(grass_decor_layout, 'grass_decor')
@@ -75,7 +78,7 @@ class Level(object):
 
                     if type == 'enemies':
                         sprite = Enemy(enemy_size, x, y,
-                                       'sprites/enemies')
+                                       'sprites/enemies/enemy_sprites')
 
                     if type == 'constraints':
                         sprite = Tile(tile_size, x, y)
@@ -99,7 +102,7 @@ class Level(object):
 
                 if val == '1':
                     door_surface = pg.image.load('sprites/exit/door.png')
-                    sprite = StaticTile(tile_size, x + 1, y, door_surface)
+                    sprite = StaticTile(tile_size, x, y, door_surface)
                     self.end.add(sprite)
 
     def camera_x(self):
@@ -160,6 +163,8 @@ class Level(object):
                 player_bottom = self.player.sprite.rect.bottom
                 if enemy_top < player_bottom < enemy_center and self.player.sprite.direction.y >= 0:
                     self.player.sprite.direction.y = -5
+                    explosion_sprite = ParticleEffect(enemy.rect.center, 'explosion')
+                    self.explosion.add(explosion_sprite)
                     enemy.kill()
 
     def win(self):
@@ -167,7 +172,7 @@ class Level(object):
             select_level_screen()
 
     def death(self):
-        if self.player.sprite.rect.top > HEIGHT - 28:
+        if self.player.sprite.rect.top > HEIGHT:
             game_over_screen()
 
     def collide_coin(self):
@@ -181,10 +186,10 @@ class Level(object):
         # Отрисовка объектов на карте
         self.grass_decor_sprites.draw(self.display_surface)
         self.score_sprites.draw(self.display_surface)
-        self.enemies_sprites.draw(self.display_surface)
         self.trees_sprites.draw(self.display_surface)
         self.trees_top_sprites.draw(self.display_surface)
         self.block_sprites.draw(self.display_surface)
+        self.enemies_sprites.draw(self.display_surface)
 
         # Обновление объектов на карте
         self.grass_decor_sprites.update(self.world_shift)
@@ -196,15 +201,23 @@ class Level(object):
 
         # Границы врагов
         self.constraints_sprites.update(self.world_shift)
-        # Поворот врагов, когда они дошлли границы
+        #self.explosion.update(self.world_shift)
+        #self.explosion.draw(self.display_surface)
+
+        # Поворот врагов, когда они дошли границы
         self.enemy_reverse()
+
+        # Уничтожение врага
+        self.check_enemy_collisions()
 
         # Место появления игрока и место его выхода с уровня
         self.end.update(self.world_shift)
         self.end.draw(self.display_surface)
 
+        # Сбор монет
         self.collide_coin()
-        self.check_enemy_collisions()
+
+        # Выйгрыш или проигрыщ
         self.win()
         self.death()
 

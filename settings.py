@@ -15,7 +15,7 @@ level_map_1 = {
     'trees': 'levels/level_1/level_1_trees.csv',
     'trees_top': 'levels/level_1/level_1_trees_top.csv'
 }
-number_tile_y, number_tile_x = 19, 79
+number_tile_y, number_tile_x = 27, 79
 tile_size = 18
 enemy_size = 24
 WIDTH, HEIGHT = 800, number_tile_y * tile_size
