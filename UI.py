@@ -1,5 +1,7 @@
 # Импортирование модули
 import pygame as pg
+import csv
+from main import cur, connection
 
 
 # Класс интерфейса уровня
@@ -34,3 +36,12 @@ class UI(object):
         coin_amount = self.font.render(str(amount), False, '#ffffff')
         coin_amount_rect = coin_amount.get_rect(midleft=(self.coin_rect.right + 4, self.coin_rect.centery))
         self.display.blit(coin_amount, coin_amount_rect)
+        self.amount = amount
+
+        with open('database/base.txt', 'a', encoding='utf-8') as r_file:
+            file_writer = csv.writer(r_file)
+            file_writer.writerow(str(self.amount))
+
+
+
+

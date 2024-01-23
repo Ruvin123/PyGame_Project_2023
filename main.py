@@ -4,6 +4,7 @@ import pygame as pg
 import os
 import level_loader
 import sqlite3
+import csv
 
 # Основные настройки
 pg.init()
@@ -186,7 +187,7 @@ def score_screen():
         screen.blit(recordscreen, (0, 0))
 
         for i in records.keys():
-            follow = font.render(f'{i} {records[i]}', 1, "#ffffff")
+            follow = font.render(f'{i} {int(records[i])}', 1, "#ffffff")
             screen.blit(follow, (WIDTHS_MENU / 2 - 90, a))
             a += 25
         a = 100
@@ -387,6 +388,9 @@ def register():
             # Кнопка registr
             if event.type == pg.USEREVENT and event.button == register_button:
                 cur.execute(f"""INSERT INTO score (name, score) VALUES ('{user_text}', 0);""")
+                with open('database/base.txt', 'a', encoding='utf-8') as r_file:
+                    file_writer = csv.writer(r_file)
+                    file_writer.writerow(user_text)
                 connection.commit()
                 Check = True
                 names = user_text
@@ -406,7 +410,7 @@ def register():
         pg.draw.rect(screen, color, input_rect, 3)
         text_surface = base_font.render(user_text, True, (255, 255, 255))
         screen.blit(text_surface, (input_rect.x + 5, input_rect.y + 5))
-        input_rect.w = max(100, text_surface.get_WIDTHS_MENU() + 10)
+        input_rect.w = max(100, text_surface.get_width() + 10)
         pg.display.flip()
 
 

@@ -1,10 +1,10 @@
-# Импортируем модули и файлы
 import pygame as pg
 from settings import *
 from tiles import Tile, StaticTile, AnimatedTile, Coin, Enemy
 from player import Player
-from main import game_over_screen, home_screen, Check, names, cur
+from main import game_over_screen, home_screen, cur, connection
 from particle import ParticleEffect
+import csv
 
 
 # Класс уровня игры
@@ -203,6 +203,31 @@ class Level(object):
     # Если игрок выйграл, то он переходит на экран выбора другого уровня
     def win(self):
         if pg.sprite.spritecollide(self.player.sprite, self.end, 0):
+            a = list()
+            text = ''
+            amount = ''
+
+            with open('database/base.txt', 'r', encoding='utf-8') as r_file:
+                file_reader = csv.reader(r_file)
+                for i in file_reader:
+                     a.append(i)
+
+                for i in a[0]:
+                    if i != ',':
+                        text += i
+
+                for i in a[len(a) - 2]:
+                    if i != ',':
+                        amount += i
+
+                print(amount)
+
+                cur.execute(f"""INSERT INTO score (name, score) VALUES ('{text}', '{int(amount)}');""")
+                connection.commit()
+
+            f = open('database/base.txt', 'r+')
+            f.truncate(0)
+
             win = pg.mixer.Sound('sounds/end.mp3')
             win.play()
             home_screen()
@@ -215,7 +240,6 @@ class Level(object):
             death.play()
             game_over_screen(self.level_id)
 
-
     # Подбор монет на уровне
     def collide_coin(self):
         collided_coins = pg.sprite.spritecollide(self.player.sprite, self.score_sprites, 1)
@@ -224,9 +248,6 @@ class Level(object):
                 coin_grab = pg.mixer.Sound('sounds/coin_grab.mp3')
                 coin_grab.play()
                 self.change_coin(1)
-
-        if Check:
-            cur.execute(f"""INSERT INTO score (name, score) VALUES ('{names}', {coin});""")
 
     # Отображение всех спрайтов на экране
     def run(self):
